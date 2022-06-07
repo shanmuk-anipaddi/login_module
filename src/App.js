@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Login from "./Components/Login/Login";
+import Home from "./Components/Home/Home";
+import Menu from "./Components/Menu/Menu";
 
 function App() {
+  const [loggedIn, setloggedIn] = useState(false);
+
+  const loginHandler = (userName, pwd) => {
+    console.log("In App file");
+    console.log("UserName : ", userName);
+    console.log("Pwd : ", pwd);
+    if (userName.includes("@") && pwd.length > 6) {
+      localStorage.setItem("isLoggedIn", "1");
+      setloggedIn(true);
+    }
+  };
+
+  const logoutHandler = () => {
+    localStorage.removeItem("isLoggedIn");
+    setloggedIn(false);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {!loggedIn && <Login getlogin={loginHandler} />}
+      {loggedIn && <Home />}
+      {loggedIn && (
+        <Menu loggedStatus={loggedIn} logoutHandle={logoutHandler} />
+      )}
     </div>
   );
 }
