@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Login from "./Components/Login/Login";
 import Home from "./Components/Home/Home";
 import Menu from "./Components/Menu/Menu";
@@ -6,10 +6,17 @@ import Menu from "./Components/Menu/Menu";
 function App() {
   const [loggedIn, setloggedIn] = useState(false);
 
+  /*Using UseEffect to check the isLoggedIn once with out rerendering*/
+
+  const logged = useEffect(() => {
+    const getLoggedFlag = localStorage.getItem("isLoggedIn");
+    console.log("Logged Flag : ", getLoggedFlag);
+    if (getLoggedFlag) {
+      setloggedIn(true);
+    }
+  }, []);
+
   const loginHandler = (userName, pwd) => {
-    console.log("In App file");
-    console.log("UserName : ", userName);
-    console.log("Pwd : ", pwd);
     if (userName.includes("@") && pwd.length > 6) {
       localStorage.setItem("isLoggedIn", "1");
       setloggedIn(true);
