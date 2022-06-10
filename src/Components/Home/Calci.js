@@ -29,11 +29,11 @@ const todoFunc = (todos, action) => {
         return todo;
       });
     case "DELETE_TODO":
-        return todos.filter((todo)=>{
-            if(todo.id !== action.payload.id){
-                return todo
-            }
-        })  
+      return todos.filter((todo) => {
+        if (todo.id !== action.payload.id) {
+          return todo;
+        }
+      });
   }
 };
 //console.log('Reducer',todos)
@@ -110,9 +110,13 @@ const Calci = () => {
             >
               Toggle
             </button>
-            <button onClick={() => {
-                setTodos({type:"DELETE_TODO",payload :{id:todo.id}})
-            }}>Delete</button>
+            <button
+              onClick={() => {
+                setTodos({ type: "DELETE_TODO", payload: { id: todo.id } });
+              }}
+            >
+              Delete
+            </button>
           </li>
         );
       })}

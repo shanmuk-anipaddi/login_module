@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Login from "./Components/Login/Login";
 import Home from "./Components/Home/Home";
 import Menu from "./Components/Menu/Menu";
+import AuthContext from "./Components/Context/Context_file";
 
 function App() {
   const [loggedIn, setloggedIn] = useState(false);
@@ -29,13 +30,18 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <AuthContext.Provider
+      value={{
+        loggedIn: loggedIn,
+        isLogout: logoutHandler
+      }}
+    >
       {!loggedIn && <Login getlogin={loginHandler} />}
       {loggedIn && <Home />}
       {loggedIn && (
-        <Menu loggedStatus={loggedIn} logoutHandle={logoutHandler} />
+        <Menu  />
       )}
-    </div>
+    </AuthContext.Provider>
   );
 }
 

@@ -1,15 +1,23 @@
-import React from 'react';
+import React from "react";
+import AuthContext from "../Context/Context_file";
 
 const Navigation = (props) => {
-
-
-    
-    return (
-        <ul>
-            {props.loggedIn && <li>Home</li>}
-            {props.loggedIn && <li ><button onClick={props.logout}>Logout</button></li>}
-        </ul>
-    );
-}
+  return (
+    <AuthContext.Consumer>
+      {(ctx) => {
+        return (
+          <ul>
+            {ctx.loggedIn && <li>Home</li>}
+            {ctx.loggedIn && (
+              <li>
+                <button onClick={ctx.isLogout}>Logout</button>
+              </li>
+            )}
+          </ul>
+        );
+      }}
+    </AuthContext.Consumer>
+  );
+};
 
 export default Navigation;
