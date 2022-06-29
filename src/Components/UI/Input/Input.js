@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useRef, useImperativeHandle } from "react";
 
-const Input = (props) => {
+const Input = React.forwardRef((props, ref) => {
+  const inputRef = useRef();
+  const activate = () => {
+    inputRef.current.focus();
+  };
+
+  useImperativeHandle(ref, () => {
+    return { focus: activate };
+  });
+
   return (
     <div className={`${props.divClassName}`}>
       <input
-        className={`${
-          props.isValid === false ? "bg-red-300 " : ""
-        } border-2`}
+        ref={inputRef}
+        className={`${props.isValid === false ? "bg-red-300 " : ""} border-2`}
         type={props.type}
         name={props.name}
         onChange={props.onChange}
@@ -14,6 +22,6 @@ const Input = (props) => {
       />
     </div>
   );
-};
+});
 
 export default Input;

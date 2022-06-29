@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from "react";
+import React, { useState, useReducer, useEffect, useContext, useRef } from "react";
 import AuthContext from "../Context/Context_file";
 import Input from "../UI/Input/Input";
 
@@ -17,12 +17,12 @@ const emailReducer = (state, action) => {
         value: action.payload.pwd,
         isValid: action.payload.pwd.length > 6,
       };
-    case "GET_FORM_VALID":
-      return {
-        isValid:
-          (action.payload.userEmail.includes("@") &&
-          action.payload.userPwd.length > 6)
-      };
+    // case "GET_FORM_VALID":
+    //   return {
+    //     isValid:
+    //       action.payload.userEmail.includes("@") &&
+    //       action.payload.userPwd.length > 6,
+    //   };
 
     default:
       return { value: "", isValid: false };
@@ -30,11 +30,14 @@ const emailReducer = (state, action) => {
 };
 
 const Login = (props) => {
+
+  
   //const [userName, setUsrname] = useState("");
   //const [password, setPwd] = useState("");
   //const [userNameValid, setuserNameValid] = useState("");
   //const [userPwdValid, setUserPwdValid] = useState("");
-  //const [formValid, setFormValid] = useState("");
+  const [formValid, setFormValid] = useState(false);
+
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -45,9 +48,25 @@ const Login = (props) => {
     isValid: null,
   });
 
-  const [formValid, dispatchFormValid] = useReducer(emailReducer, {
-    isValid: false,
-  });
+  useEffect(()=>{
+      const identifier = setTimeout(() => {
+          setFormValid(emailState.isValid && pwdState.isValid)
+      }, 500);
+
+      return ()=>{
+        console.log("CLEANUP")
+        clearTimeout(identifier)
+      }
+
+  },[emailState.isValid,pwdState.isValid])
+
+  
+
+
+
+  // const [formValid, dispatchFormValid] = useReducer(emailReducer, {
+  //   isValid: false,
+  // });
 
   console.log("Email state ", emailState);
 
@@ -63,8 +82,6 @@ const Login = (props) => {
     //setPwd(e.target.value);
   };
 
-
-
   //const
   // const validateUserName = () => {
   //   // setuserNameValid(emailState.value.includes("@"));
@@ -75,16 +92,22 @@ const Login = (props) => {
   // };
 
   const authCtx = useContext(AuthContext);
+  const emailInputRef = useRef();
+  const pwdInputref = useRef();
 
   const loginHandler = (e) => {
     e.preventDefault();
-    dispatchFormValid({
-      type: "GET_FORM_VALID",
-      payload: { userEmail: emailState.value, userPwd: pwdState.value },
-    });
+    // dispatchFormValid({
+    //   type: "GET_FORM_VALID",
+    //   payload: { userEmail: emailState.value, userPwd: pwdState.value },
+    // });
     console.log("formValid ", formValid);
-    if (formValid.isValid) {
+    if (formValid) {
       authCtx.getlogin(emailState.value, pwdState.value);
+    }else if(emailState.isValid){
+      emailInputRef.current.focus()
+    }else{
+      pwdInputref.current.focus()
     }
 
     //console.log("UserName", userName);
@@ -99,6 +122,7 @@ const Login = (props) => {
       </center>
       <form method="get">
         <Input
+          ref={emailInputRef}
           isValid={emailState.isValid}
           type="text"
           name="username"
@@ -106,6 +130,7 @@ const Login = (props) => {
         />
 
         <Input
+          ref={pwdInputref}
           divClassName="pt-2"
           isValid={pwdState.isValid}
           type="password"
