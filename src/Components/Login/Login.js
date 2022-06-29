@@ -1,4 +1,6 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useContext } from "react";
+import AuthContext from "../Context/Context_file";
+import Input from "../UI/Input/Input";
 
 const emailReducer = (state, action) => {
   //console.log("State est ",state.value)
@@ -15,6 +17,15 @@ const emailReducer = (state, action) => {
         value: action.payload.pwd,
         isValid: action.payload.pwd.length > 6,
       };
+    case "GET_FORM_VALID":
+      return {
+        isValid:
+          (action.payload.userEmail.includes("@") &&
+          action.payload.userPwd.length > 6)
+      };
+
+    default:
+      return { value: "", isValid: false };
   }
 };
 
@@ -23,7 +34,7 @@ const Login = (props) => {
   //const [password, setPwd] = useState("");
   //const [userNameValid, setuserNameValid] = useState("");
   //const [userPwdValid, setUserPwdValid] = useState("");
-  const [formValid, setFormValid] = useState("");
+  //const [formValid, setFormValid] = useState("");
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -34,7 +45,12 @@ const Login = (props) => {
     isValid: null,
   });
 
+  const [formValid, dispatchFormValid] = useReducer(emailReducer, {
+    isValid: false,
+  });
+
   console.log("Email state ", emailState);
+
   const getUserName = (e) => {
     //console.log("UserName : ", e.target.value);
     //setUsrname(e.target.value);
@@ -47,6 +63,9 @@ const Login = (props) => {
     //setPwd(e.target.value);
   };
 
+
+
+  //const
   // const validateUserName = () => {
   //   // setuserNameValid(emailState.value.includes("@"));
   // };
@@ -55,9 +74,19 @@ const Login = (props) => {
   //   setUserPwdValid(password.length > 6);
   // };
 
+  const authCtx = useContext(AuthContext);
+
   const loginHandler = (e) => {
     e.preventDefault();
-    props.getlogin(emailState.value, pwdState.value);
+    dispatchFormValid({
+      type: "GET_FORM_VALID",
+      payload: { userEmail: emailState.value, userPwd: pwdState.value },
+    });
+    console.log("formValid ", formValid);
+    if (formValid.isValid) {
+      authCtx.getlogin(emailState.value, pwdState.value);
+    }
+
     //console.log("UserName", userName);
     //console.log("Password", password);
   };
@@ -69,28 +98,25 @@ const Login = (props) => {
         <h2>Welcome To Login Page</h2>
       </center>
       <form method="get">
-        <div>
-          <input
-            className={`${
-              emailState.isValid === false ? "bg-red-300 " : ""
-            } border-2`}
-            type="text"
-            name="username"
-            onChange={getUserName}
-            // onBlur={validateUserName}
-          />
-        </div>
-        <div className="pt-2">
-          <input
-            className={`${
-              pwdState.isValid === false ? "bg-red-300 " : ""
-            } border-2 `}
-            type="password"
-            name="password"
-            onChange={getPwd}
-            // onBlur={validatePwd}
-          />
-        </div>
+        <Input
+          isValid={emailState.isValid}
+          type="text"
+          name="username"
+          onChange={getUserName}
+        />
+
+        <Input
+          divClassName="pt-2"
+          isValid={pwdState.isValid}
+          type="password"
+          name="password"
+          onChange={getPwd}
+        />
+        {/* {if(formValid.inValid){
+          btnShow : ''
+        }else{
+          btnShow : "diabled"
+        }} */}
         <button
           type="submit"
           onClick={loginHandler}

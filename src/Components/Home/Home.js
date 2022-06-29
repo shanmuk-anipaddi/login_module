@@ -1,7 +1,8 @@
-import React from "react";
+import React,{useContext} from "react";
 import Calci from "./Calci";
 
 const Home = () => {
+  
   return (
     <>
       <h2>Welcome to Home page</h2>
